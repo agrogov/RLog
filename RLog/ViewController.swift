@@ -96,7 +96,7 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
     }
     
     
-    // Check out the discovered peripherals to find Sensor Tag
+    // Check out the discovered peripherals to find Sensors
     func centralManager(central: CBCentralManager, didDiscoverPeripheral peripheral: CBPeripheral, advertisementData: [String : AnyObject], RSSI: NSNumber) {
         
         if Sensors.sensorsFound(advertisementData) == true {
@@ -112,7 +112,7 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
         }
         else {
             self.statusLabel.text = "Sensor NOT Found"
-            //showAlertWithText(header: "Warning", message: "SensorTag Not Found")
+            //showAlertWithText(header: "Warning", message: "Sensors Not Found")
         }
     }
     
@@ -206,7 +206,7 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         
         let thisCell = tableView.dequeueReusableCellWithIdentifier("sensorsCell") as! SensorsTableViewCell
-        thisCell.sensorNameLabel.text  = allSensorLabels[indexPath.row]
+        thisCell.sensorNameLabel.text = allSensorLabels[indexPath.row]
         
         let valueString = NSString(format: "%.1f", allSensorValues[indexPath.row])
         thisCell.sensorValueLabel.text = valueString as String
@@ -234,44 +234,4 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
         self.sensorsTableView.tableFooterView = UIView() // to hide empty lines after cells
         self.view.addSubview(sensorsTableView)
     }
-}
-
-class SensorsTableViewCell: UITableViewCell {
-    
-    var sensorNameLabel  = UILabel()
-    var sensorValueLabel = UILabel()
-    
-    override func awakeFromNib() {
-        super.awakeFromNib()
-        // Initialization code
-    }
-    
-    override func setSelected(selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-        
-        // Configure the view for the selected state
-    }
-    
-    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-        
-        // sensor name
-        self.addSubview(sensorNameLabel)
-        sensorNameLabel.font = UIFont(name: "HelveticaNeue", size: 18)
-        sensorNameLabel.frame = CGRect(x: self.bounds.origin.x+self.layoutMargins.left*2, y: self.bounds.origin.y, width: self.frame.width, height: self.frame.height)
-        sensorNameLabel.textAlignment = NSTextAlignment.Left
-        sensorNameLabel.text = "Sensor Name Label"
-        
-        // sensor value
-        self.addSubview(sensorValueLabel)
-        sensorValueLabel.font = UIFont(name: "HelveticaNeue", size: 18)
-        sensorValueLabel.frame = CGRect(x: self.bounds.origin.x, y: self.bounds.origin.y, width: self.frame.width, height: self.frame.height)
-        sensorValueLabel.textAlignment = NSTextAlignment.Right
-        sensorValueLabel.text = "Value"
-    }
-    
-    required init(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
 }
