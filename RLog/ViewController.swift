@@ -253,6 +253,7 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
         
         if !self.logStarted {
             self.logStarted = true
+            self.chartUpdate()
             timer.invalidate() // just in case not started multiple times
             // Set up sensor update timer
             timer = NSTimer.scheduledTimerWithTimeInterval(30, target: self, selector: #selector(self.chartUpdate), userInfo: nil, repeats: true)
