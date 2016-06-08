@@ -17,8 +17,16 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
     @IBOutlet weak var sensorsTableView: UITableView!
     @IBOutlet weak var lineChartView: LineChartView!
     
+    //Bottom bar buttons
+    @IBOutlet weak var btnStartLog: UIBarButtonItem!
+    @IBOutlet weak var btnCharge: UIBarButtonItem!
+    @IBOutlet weak var btnFCStart: UIBarButtonItem!
+    @IBOutlet weak var btnFCStop: UIBarButtonItem!
+    @IBOutlet weak var btnDrop: UIBarButtonItem!
+    
     var xAxe = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18]
     var ChartValues = [0.0]
+    var logStarted : Bool = false
     
     // BLE
     var centralManager : CBCentralManager!
@@ -26,6 +34,7 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
     var RXTXCharacteristic : CBCharacteristic?
     
     // Sensor Values
+    var sensorsRequestTime : Double = 3
     var allSensorLabels : [String] = []
     var allSensorValues : [Double] = []
     var ET : Double!
@@ -59,6 +68,10 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
             let stringData = ("READ\r\n" as NSString).dataUsingEncoding(NSUTF8StringEncoding)
             self.sensorsPeripheral.writeValue(stringData!, forCharacteristic: self.RXTXCharacteristic!, type: CBCharacteristicWriteType.WithResponse)
         }
+    }
+    
+    func chartUpdate(){
+        setChart(xAxe, values: self.ChartValues)
     }
     
     func setChart(dataPoints: [Int], values: [Double]) {
@@ -164,7 +177,7 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
                 var timer = NSTimer()
                 timer.invalidate() // just in case not started multiple times
                 // Set up sensor update timer
-                timer = NSTimer.scheduledTimerWithTimeInterval(3, target: self, selector: #selector(self.sensorUpdate), userInfo: nil, repeats: true)
+                timer = NSTimer.scheduledTimerWithTimeInterval(self.sensorsRequestTime, target: self, selector: #selector(self.sensorUpdate), userInfo: nil, repeats: true)
             }
         }
         
@@ -186,10 +199,10 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
                 if self.ChartValues[0] == 0.0 {
                     self.ChartValues[0] = self.BT
                 } else {
-                    //self.ChartValues.append(self.BT)
+                    self.ChartValues.append(self.BT)
                 }
             }
-            setChart(xAxe, values: self.ChartValues)
+            //setChart(xAxe, values: self.ChartValues)
         }
         
         self.sensorsTableView.reloadData()
@@ -233,5 +246,21 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
         self.sensorsTableView.registerClass(SensorsTableViewCell.self, forCellReuseIdentifier: "sensorsCell")
         self.sensorsTableView.tableFooterView = UIView() // to hide empty lines after cells
         self.view.addSubview(sensorsTableView)
+    }
+    
+    @IBAction func btnStartLogPress(sender: AnyObject) {
+        var timer = NSTimer()
+        
+        if !self.logStarted {
+            self.logStarted = true
+            timer.invalidate() // just in case not started multiple times
+            // Set up sensor update timer
+            timer = NSTimer.scheduledTimerWithTimeInterval(30, target: self, selector: #selector(self.chartUpdate), userInfo: nil, repeats: true)
+            //self.btnStartLog.title = "Stop"
+        } else {
+            self.logStarted = false
+            timer.invalidate()
+            //self.btnStartLog.title = "Start"
+        }
     }
 }
