@@ -52,8 +52,8 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
         
         // Initialize all sensor values and labels
         allSensorLabels = Sensors.getSensorLabels()
-        for (var i=0; i<allSensorLabels.count; i+=1) {
-            allSensorValues.append(0)
+        for i in 0..<self.allSensorLabels.count {
+            self.allSensorValues.append(Double(i*0))
         }
     }
 
@@ -71,6 +71,7 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
     }
     
     func chartUpdate(){
+        self.ChartValues.append(self.BT)
         setChart(xAxe, values: self.ChartValues)
     }
     
@@ -199,7 +200,7 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
                 if self.ChartValues[0] == 0.0 {
                     self.ChartValues[0] = self.BT
                 } else {
-                    self.ChartValues.append(self.BT)
+                    //self.ChartValues.append(self.BT)
                 }
             }
             //setChart(xAxe, values: self.ChartValues)
