@@ -98,14 +98,19 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
     
     // Check status of BLE hardware
     func centralManagerDidUpdateState(central: CBCentralManager) {
-        if central.state == CBCentralManagerState.PoweredOn {
-            // Scan for peripherals if BLE is turned on
+        if #available(iOS 10.0, *) {
+            if central.state == CBManagerState.PoweredOn {
+                // Scan for peripherals if BLE is turned on
+                central.scanForPeripheralsWithServices(nil, options: nil)
+                self.statusLabel.text = "Searching for BLE Devices"
+            } else {
+                // Can have different conditions for all states if needed - show generic alert for now
+                showAlertWithText("Error", message: "Bluetooth switched off or not initialized")
+            }
+        } else {
+            // Fallback on earlier versions
             central.scanForPeripheralsWithServices(nil, options: nil)
             self.statusLabel.text = "Searching for BLE Devices"
-        }
-        else {
-            // Can have different conditions for all states if needed - show generic alert for now
-            showAlertWithText("Error", message: "Bluetooth switched off or not initialized")
         }
     }
     
